@@ -1,12 +1,13 @@
-import React from 'react';
-import { auth } from '../firebase';
+import React from "react";
+import { auth } from "../firebase";
 
 const Feed = () => {
   return (
-    <div>Feed
+    <div>
+      Feed
       <button onClick={() => auth.signOut()}>Logout</button>
     </div>
-  )
-}
+  );
+};
 
-export default Feed
+export default Feed;

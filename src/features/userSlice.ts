@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../app/store';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../app/store";
 
 interface USER {
   displayName: string;
@@ -7,9 +7,9 @@ interface USER {
 }
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState: {
-    user: {uid: '', photoUrl: '', displayName: ''},
+    user: { uid: "", photoUrl: "", displayName: "" },
   },
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -17,7 +17,7 @@ export const userSlice = createSlice({
       state.user = action.payload;
     },
     logout: (state) => {
-      state.user = { uid: '', photoUrl: '', displayName: '' };
+      state.user = { uid: "", photoUrl: "", displayName: "" };
     },
     updateUserProfile: (state, action: PayloadAction<USER>) => {
       state.user.displayName = action.payload.displayName;

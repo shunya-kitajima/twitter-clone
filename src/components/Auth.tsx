@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   Avatar,
   Button,
@@ -12,41 +12,55 @@ import {
   Modal,
   IconButton,
   Box,
-} from '@material-ui/core';
-import SendIcon from '@material-ui/icons/Send';
-import CameraIcon from '@material-ui/icons/Camera';
-import EmailIcon from '@material-ui/icons/Email';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+} from "@material-ui/core";
+import SendIcon from "@material-ui/icons/Send";
+import CameraIcon from "@material-ui/icons/Camera";
+import EmailIcon from "@material-ui/icons/Email";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
-import styles from './Auth.module.css';
-import { auth, provider, storage } from '../firebase';
-import { updateUserProfile } from '../features/userSlice';
+import styles from "./Auth.module.css";
+import { auth, provider, storage } from "../firebase";
+import { updateUserProfile } from "../features/userSlice";
+
+const getModalStyle = () => {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100vh',
+    height: "100vh",
   },
   image: {
-    backgroundImage: 'url(https://images.unsplash.com/photo-1626055716542-8c6d7cd900a5?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80)',
-    backgroundRepeat: 'no-repeat',
+    backgroundImage:
+      "url(https://images.unsplash.com/photo-1626055716542-8c6d7cd900a5?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80)",
+    backgroundRepeat: "no-repeat",
     backgroundColor:
-      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
+    backgroundSize: "cover",
+    backgroundPosition: "center",
   },
   paper: {
     margin: theme.spacing(8, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -57,35 +71,51 @@ const useStyles = makeStyles((theme) => ({
 const Auth: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const[avatarImage, setAvatarImage] = useState<File | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [isLogin, setIsLogin] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+
+  const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
+    await auth
+      .sendPasswordResetEmail(resetEmail)
+      .then(() => {
+        setOpenModal(false);
+        setResetEmail("");
+      })
+      .catch((err) => {
+        alert(err.message);
+        setResetEmail("");
+      });
+  };
 
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
       setAvatarImage(e.target.files![0]);
-      e.target.value = '';
+      e.target.value = "";
     }
-  }; 
+  };
 
   const signInEmail = async () => {
     await auth.signInWithEmailAndPassword(email, password);
   };
   const signUpEmail = async () => {
     const authUser = await auth.createUserWithEmailAndPassword(email, password);
-    let url = '';
+    let url = "";
     if (avatarImage) {
-      const S = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       const N = 16;
       const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
         .map((n) => S[n % S.length])
-        .join('');
-      const fileName = randomChar + '_' + avatarImage.name;
+        .join("");
+      const fileName = randomChar + "_" + avatarImage.name;
 
       await storage.ref(`avatars/${fileName}`).put(avatarImage);
-      url = await storage.ref('avatars').child(fileName).getDownloadURL();
+      url = await storage.ref("avatars").child(fileName).getDownloadURL();
     }
     await authUser.user?.updateProfile({
       displayName: username,
@@ -113,10 +143,9 @@ const Auth: React.FC = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            {isLogin ? 'Login' : 'Register'}
+            {isLogin ? "Login" : "Register"}
           </Typography>
           <form className={classes.form} noValidate>
-
             {!isLogin && (
               <>
                 <TextField
@@ -135,23 +164,23 @@ const Auth: React.FC = () => {
                   }}
                 />
                 <Box textAlign="center">
-                <IconButton>
-                  <label>
-                    <AccountCircleIcon
-                      fontSize="large"
-                      className={
-                        avatarImage
-                          ? styles.login_addIconLoaded
-                          : styles.login_addIcon
-                      }
-                    />
-                    <input
-                      className={styles.login_hiddenIcon}
-                      type="file"
-                      onChange={onChangeImageHandler}
-                    />
-                  </label>
-                </IconButton>
+                  <IconButton>
+                    <label>
+                      <AccountCircleIcon
+                        fontSize="large"
+                        className={
+                          avatarImage
+                            ? styles.login_addIconLoaded
+                            : styles.login_addIcon
+                        }
+                      />
+                      <input
+                        className={styles.login_hiddenIcon}
+                        type="file"
+                        onChange={onChangeImageHandler}
+                      />
+                    </label>
+                  </IconButton>
                 </Box>
               </>
             )}
@@ -202,28 +231,36 @@ const Auth: React.FC = () => {
                   ? async () => {
                       try {
                         await signInEmail();
-                      } catch(err) {
+                      } catch (err) {
                         alert(err.message);
                       }
                     }
                   : async () => {
                       try {
                         await signUpEmail();
-                      } catch(err) {
+                      } catch (err) {
                         alert(err.message);
                       }
-                  }
+                    }
               }
             >
-              {isLogin ? 'Login' : 'Register'}
+              {isLogin ? "Login" : "Register"}
             </Button>
             <Grid container>
               <Grid item xs>
-                <span className={styles.login_reset}>Forgot password?</span>
+                <span
+                  className={styles.login_reset}
+                  onClick={() => setOpenModal(true)}
+                >
+                  Forgot password?
+                </span>
               </Grid>
               <Grid item>
-                <span className={styles.login_toggleMode} onClick={() => setIsLogin(!isLogin)}>
-                  {isLogin ? 'Create new account?' : 'Back to login'}
+                <span
+                  className={styles.login_toggleMode}
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  {isLogin ? "Create new account?" : "Back to login"}
                 </span>
               </Grid>
             </Grid>

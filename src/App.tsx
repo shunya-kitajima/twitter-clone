@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import styles from './App.module.css';
-import Auth from './components/Auth';
-import Feed from './components/Feed';
-import { selectUser, login, logout } from './features/userSlice';
-import { auth } from './firebase';
-
+import styles from "./App.module.css";
+import Auth from "./components/Auth";
+import Feed from "./components/Feed";
+import { selectUser, login, logout } from "./features/userSlice";
+import { auth } from "./firebase";
 
 const App: React.FC = () => {
   const user = useSelector(selectUser);
@@ -35,13 +34,13 @@ const App: React.FC = () => {
     <>
       {user.uid ? (
         <div className={styles.app}>
-          <Feed/>
+          <Feed />
         </div>
       ) : (
-        <Auth/>
+        <Auth />
       )}
     </>
   );
-}
+};
 
 export default App;
