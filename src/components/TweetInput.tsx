@@ -93,7 +93,7 @@ const TweetInput = () => {
                 }
               />
               <input
-                className={styles.tweet_hiddenicon}
+                className={styles.tweet_hiddenIcon}
                 type="file"
                 onChange={onChangeImageHandler}
               />
@@ -104,7 +104,7 @@ const TweetInput = () => {
           type="submit"
           disabled={!tweetMsg}
           className={
-            tweetMsg ? styles.tweet_sendBtn : styles.tweet_sendDisabledBtn
+            tweetMsg ? styles.tweet_sendBtn : styles.tweet_sendDisableBtn
           }
         >
           Tweet
